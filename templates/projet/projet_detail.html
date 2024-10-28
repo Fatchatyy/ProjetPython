@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ projet.title }}</h1>
+<p><strong>Genre:</strong> {{ projet.genre }}</p>
+<a href="{% url 'module:projet_list' %}">Back to Project List</a>
+{% endblock %}

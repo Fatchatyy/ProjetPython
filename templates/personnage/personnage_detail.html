@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="card-title text-center mb-3">{{ personnage.nom }}</h1>
+            <p class="card-text text-center">{{ personnage.description }}</p>
+
+            <!-- Like Button -->
+            <div class="text-center my-3">
+                <button id="like-btn" data-id="{{ personnage.pk }}" class="btn btn-outline-danger">
+                    <i class="fa fa-heart {% if user in personnage.likes.all %}liked-heart{% else %}unliked-heart{% endif %}" id="heart-icon"></i>
+                    <span id="total-likes">{{ personnage.total_likes }}</span> likes
+                </button>
+            </div>
+
+            <!-- Superuser Options -->
+            {% if user.is_superuser %}
+            <div class="d-flex justify-content-center mt-4">
+                <a href="{% url 'module:personnage_update' personnage.pk %}" class="btn btn-warning mx-2">Modifier</a>
+                <a href="{% url 'module:personnage_delete' personnage.pk %}" class="btn btn-danger mx-2">Supprimer</a>
+            </div>
+            {% endif %}
+                    <!-- Comment Section -->
+                    <div class="mt-4">
+                        <h6>Commentaires</h6>
+                        <ul class="list-group mb-3">
+                          {% for comment in personnage.comments.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                              <div>
+                                <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                              </div>
+                              {% if comment.user == user %}
+                                <form action="{% url 'module:delete_comment' comment.pk %}" method="post" class="ms-3">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                </form>
+                              {% endif %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+      
+                        {% if user.is_authenticated %}
+                          <form action="{% url 'module:add_comment' personnage.pk %}" method="post" class="d-flex">
+                            {% csrf_token %}
+                            <input type="text" name="content" class="form-control me-2" placeholder="Ajouter un commentaire">
+                            <button type="submit" class="btn btn-primary">Envoyer</button>
+                          </form>
+                        {% endif %}
+                      </div>
+            <div class="text-center mt-4">
+                <a href="{% url 'module:personnage_list' %}" class="btn btn-secondary">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styles -->
+<style>
+    .liked-heart {
+        color: red;
+    }
+
+    .unliked-heart {
+        color: transparent;
+    }
+</style>
+
+<!-- Script for Like Button -->
+<script>
+    document.getElementById('like-btn').addEventListener('click', function() {
+        var personnageId = this.getAttribute('data-id');
+        var heartIcon = document.getElementById('heart-icon');
+        var totalLikes = document.getElementById('total-likes');
+
+        fetch('{% url "module:like_personnage" personnage.pk %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.liked) {
+                heartIcon.classList.remove('unliked-heart');
+                heartIcon.classList.add('liked-heart');
+            } else {
+                heartIcon.classList.remove('liked-heart');
+                heartIcon.classList.add('unliked-heart');
+            }
+            totalLikes.innerText = data.total_likes;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}

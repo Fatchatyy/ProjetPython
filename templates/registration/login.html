@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<style>
+   
+
+    .login-container {
+        background-image: url('{% static "images/hi.jpeg" %}');
+        margin-top: 60px; /* Ajustez cette valeur si nécessaire */
+        padding: 80px 0; /* Ajouter du rembourrage en haut et en bas */
+        height: auto; /* Ajustez automatiquement la hauteur */
+        margin-bottom: 0px;
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.8); /* Ajustez la valeur alpha (0.8) pour plus ou moins de transparence */
+        border-radius: 10px; /* Optionnel : ajoute des coins arrondis */
+        backdrop-filter: blur(10px); /* Optionnel : ajoute un effet de flou derrière la carte */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Optionnel : ajoute une ombre pour la profondeur */
+        padding: 40px; /* Ajoutez du rembourrage interne pour la carte */
+    }
+</style>
+
+
+
+<!-- Ajoute une marge importante pour éviter que le formulaire soit couvert -->
+<!-- login.html -->
+<div class="container login-container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Login</h3>
+
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+
+                        <!-- Display form-wide errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Username Field -->
+                        <div class="form-group mb-3">
+                            {{ form.username.label_tag }}
+                            {{ form.username|add_class:"form-control" }}
+                            {% if form.username.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.username.errors.as_text }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-group mb-3">
+                            {{ form.password.label_tag }}
+                            {{ form.password|add_class:"form-control" }}
+                            {% if form.password.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.password.errors.as_text }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-sm w-100 mb-3">Login</button>
+
+                        <a href="{% url 'password_reset' %}" class="btn btn-link d-block text-center">Lost Password?</a>
+                    </form>
+
+                    <hr>
+
+                    <p class="text-center">Don't have an account?</p>
+                    <a href="{% url 'register' %}" class="btn btn-secondary btn-sm w-100">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<section class="about section-padding">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-12 text-center">
+                <h2 class="mb-5">Get started with <span>Script</span> Genie</h2>
+            </div>
+
+            <div class="col-lg-2 col-12 mt-auto mb-auto">
+                <ul class="nav nav-pills mb-5 mx-auto justify-content-center align-items-center" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Introduction</button>
+                    </li>
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-youtube-tab" data-bs-toggle="pill" data-bs-target="#pills-youtube" type="button" role="tab" aria-controls="pills-youtube" aria-selected="true">How we work?</button>
+                    </li>
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-skill-tab" data-bs-toggle="pill" data-bs-target="#pills-skill" type="button" role="tab" aria-controls="pills-skill" aria-selected="false">Capabilites</button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-10 col-12">
+                <div class="tab-content mt-2" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
+                        <div class="row">
+                            <div class="col-lg-7 col-12">
+                                <img src="{% static 'images/pim-chu-z6NZ76_UTDI-unsplash.jpeg' %}" class="img-fluid" alt="">
+                            </div>
+
+                            <div class="col-lg-5 col-12">
+                                <div class="d-flex flex-column h-100 ms-lg-4 mt-lg-0 mt-5">
+                                    <h4 class="mb-3">Good <span>Design</span> <br>Ideas for <span>your</span> projects</h4>
+
+                                    <p>Script Genie provides templates for modules like <strong>personnage</strong>, <strong>idée de film</strong>, <strong>projet</strong>, and <strong>effets visuels</strong>.</p>
+
+                                    <p>As the template is based on Bootstrap 5 CSS, feel free to extend it with additional components as per your needs.</p>
+
+                                    <div class="mt-2 mt-lg-auto">
+                                        <a href="{% url 'about' %}" class="custom-link mb-2">
+                                            Learn more about us
+                                            <i class="bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-youtube" role="tabpanel" aria-labelledby="pills-youtube-tab">
+
+                        <div class="row">
+                            <div class="col-lg-7 col-12">
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="https://www.youtube-nocookie.com/embed/f_7JqPDWhfw?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-5 col-12">
+                                <div class="d-flex flex-column h-100 ms-lg-4 mt-lg-0 mt-5">
+                                    <h4 class="mb-3">Life at Studio</h4>
+
+                                    <p>Over three years in business, We’ve had the chance to work on a variety of projects, with companies</p>
+
+                                    <p>Custom work is branding, web design, UI/UX design</p>
+
+                                    <div class="mt-2 mt-lg-auto">
+                                        <a href="{% url 'contact' %}" class="custom-link mb-2">
+                                            Work with us
+                                            <i class="bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-skill" role="tabpanel" aria-labelledby="pills-skill-tab">
+                        <div class="row">
+                            <div class="col-lg-7 col-12">
+                                <img src="{% static 'images/cody-lannom-G95AReIh_Ko-unsplash.jpeg' %}" class="img-fluid" alt="">
+                            </div>
+
+                            <div class="col-lg-5 col-12">
+                                <div class="d-flex flex-column h-100 ms-lg-4 mt-lg-0 mt-5">
+                                    <h4 class="mb-3">What can help you?</h4>
+
+                                    <p>Over three years in business, We’ve had the chance on projects</p>
+
+                                    <div class="skill-thumb mt-3">
+
+                                        <strong>Branding</strong>
+                                            <span class="float-end">90%</span>
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width: 90%;"></div>
+                                                </div>
+
+                                        <strong>Design & Strategy</strong>
+                                            <span class="float-end">70%</span>
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%;"></div>
+                                                </div>
+
+                                        <strong>Online Platform</strong>
+                                            <span class="float-end">80%</span>
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                                                </div>
+
+                                    </div>
+                                    
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<footer class="site-footer">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-3 col-10 me-auto mb-4">
+                <h4 class="text-white mb-3"><a href="index.html">Script</a> Genie</h4>
+                <p class="copyright-text text-muted mt-lg-5 mb-4 mb-lg-0">Copyright © 2024 <strong>Script Genie</strong></p>
+                <br>
+                <p class="copyright-text">Designed by <a href="https://www.tooplate.com/" target="_blank">Tooplate</a></p>
+            </div>
+
+            <div class="col-lg-5 col-8">
+                <h5 class="text-white mb-3">Sitemap</h5>
+
+                <ul class="footer-menu d-flex flex-wrap">
+                    <li class="footer-menu-item"><a href="about.html" class="footer-menu-link">Story</a></li>
+
+              
+
+                    <li class="footer-menu-item"><a href="#" class="footer-menu-link">Privacy policy</a></li>
+
+                    <li class="footer-menu-item"><a href="#" class="footer-menu-link">FAQs</a></li>
+
+                    <li class="footer-menu-item"><a href="#" class="footer-menu-link">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-4">
+                <h5 class="text-white mb-3">Social</h5>
+
+                <ul class="social-icon">
+
+                    <li><a href="#" class="social-icon-link bi-youtube"></a></li>
+
+                    <li><a href="#" class="social-icon-link bi-whatsapp"></a></li>
+
+                    <li><a href="#" class="social-icon-link bi-instagram"></a></li>
+
+                    <li><a href="#" class="social-icon-link bi-skype"></a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</footer>
+{% endblock %}

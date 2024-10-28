@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Effets Sonores Visuelles</h2>
+  <a href="{% url 'module:effetsonorevisuelles_create' %}">Créer un nouvel effet sonore visuel</a>
+  <ul>
+    {% for effet in object_list %}
+      <li>
+        <a href="{% url 'module:effetsonorevisuelles_detail' effet.pk %}">{{ effet.titre }}</a> 
+        <span>- Projet: {{ effet.projet.title }}</span> 
+        <span>- Type: {{ effet.typeEffet }}</span>
+        <a href="{% url 'module:effetsonorevisuelles_update' effet.pk %}">Modifier</a>
+        <a href="{% url 'module:effetsonorevisuelles_delete' effet.pk %}">Supprimer</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Sentiment Analysis</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Analyze Sentiment</button>
+  </form>
+
+  {% if sentiment %}
+    <h2>Sentiment Result:</h2>
+    <canvas id="sentimentChart" width="400" height="200"></canvas>
+    
+    <script>
+      // Directly assign the sentiment data to the sentimentData variable
+      const sentimentData = {{ sentiment|safe }};
+      
+      // Prepare labels and data for the chart
+      const labels = Object.keys(sentimentData);
+      const data = Object.values(sentimentData);
+
+      // Create the chart
+      const ctx = document.getElementById('sentimentChart').getContext('2d');
+      const sentimentChart = new Chart(ctx, {
+        type: 'bar',  // You can change this to 'pie', 'line', etc.
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Emotion Scores',
+            data: data,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+  {% endif %}
+{% endblock %}

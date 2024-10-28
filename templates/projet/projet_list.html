@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Project List</h1>
+<a href="{% url 'module:projet_create' %}">Add New Project</a>
+
+<ul>
+    
+    {% for projet in object_list %}
+        <li>
+            <a href="{% url 'module:projet_detail' projet.pk %}">{{ projet.title }}bjr</a> -
+            <a href="{% url 'module:projet_update' projet.pk %}">Edit</a> -
+            <a href="{% url 'module:projet_delete' projet.pk %}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

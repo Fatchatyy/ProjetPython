@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Détails de l'Effet Sonore Visuel: {{ effetsonorevisuelles.titre }}</h1>
+<p><strong>ID:</strong> {{ effetsonorevisuelles.id }}</p>
+<p><strong>Description:</strong> {{ effetsonorevisuelles.description }}</p>
+<p><strong>Date de création:</strong> {{ effetsonorevisuelles.date_creation }}</p>
+<p><strong>Projet:</strong> {{ effetsonorevisuelles.projet.title }}</p>
+<p><strong>Type:</strong> {{ effetsonorevisuelles.typeEffet }}</p>
+
+<a href="{% url 'module:effetsonorevisuelles_update' effetsonorevisuelles.id %}">Modifier</a>
+<a href="{% url 'module:effetsonorevisuelles_delete' effetsonorevisuelles.id %}">Supprimer</a>
+<a href="{% url 'module:effetsonorevisuelles_list' %}">Retour à la liste</a>
+{% endblock %}

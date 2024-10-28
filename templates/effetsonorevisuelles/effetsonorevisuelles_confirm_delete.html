@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Supprimer l'Effet Sonore Visuel: {{ effet.titre }}</h1>
+<p>Êtes-vous sûr de vouloir supprimer cet effet sonore visuel?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirmer la suppression</button>
+</form>
+
+<a href="{% url 'module:effetsonorevisuelles_list' %}">Annuler</a>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mb-4">Liste des Films</h1>
+{% if user.is_superuser %}
+<a href="{% url 'module:film_create' %}" class="btn btn-primary mb-3">Ajouter un Film</a>
+{% endif %}
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Titre</th>
+            <th>Réalisateur</th>
+            <th>Année de Sortie</th>
+            <th>Genre</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for film in films %}
+        <tr>
+            <td>{{ film.titre }}</td>
+            <td>{{ film.realisateur }}</td>
+            <td>{{ film.annee_sortie }}</td>
+            <td>{{ film.genre }}</td>
+            <td>
+                <a href="{% url 'module:film_detail' film.pk %}" class="btn btn-info btn-sm">Voir</a>
+                {% if user.is_superuser %}
+                <a href="{% url 'module:film_update' film.pk %}" class="btn btn-warning btn-sm">Modifier</a>
+                <a href="{% url 'module:film_delete' film.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+                {%  endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

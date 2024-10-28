@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Créer/Modifier un scenario</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sauvegarder</button>
+</form>
+{% endblock %}

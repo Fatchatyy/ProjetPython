@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container my-4">
+    <h1 class="text-center mb-4">Liste des Personnages</h1>
+
+    <!-- Form to enter prompt and generate an image -->
+    <div class="card mb-4 p-3 shadow-sm">
+      <h2 class="h5 mb-3">Generate Image</h2>
+      <div class="input-group">
+        <input type="text" id="prompt-input" class="form-control" placeholder="Enter your prompt">
+        <button id="generate-btn" class="btn btn-primary">Generate</button>
+      </div>
+    </div>
+
+    <!-- Generated image section -->
+    <div class="card mb-4 p-3 shadow-sm">
+      <h2 class="h5 mb-3">Generated Image</h2>
+      <img id="generated-image" src="" alt="Generated Image" class="img-fluid mx-auto d-block" style="max-height: 300px;" />
+      <a id="download-btn" href="#" class="btn btn-success mt-3 d-block mx-auto" download="generated-image.png" style="width: 200px;">Download Image</a>
+    </div>
+
+    <!-- List of Personnages -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for personnage in object_list %}
+        <div class="col">
+          <a href="{% url 'module:personnage_detail' personnage.pk %}" class="text-decoration-none">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">{{ personnage.nom }}</h5>
+                <p class="card-text">{{ personnage.description }}</p>
+    
+                <!-- Like Button -->
+                <button id="like-btn-{{ personnage.pk }}" data-id="{{ personnage.pk }}" class="btn btn-outline-danger">
+                  <i class="fa fa-heart {% if user in personnage.likes.all %}liked-heart{% else %}unliked-heart{% endif %}" id="heart-icon-{{ personnage.pk }}"></i>
+                  <span id="total-likes-{{ personnage.pk }}">{{ personnage.total_likes }}</span> likes
+                </button>
+    
+                <!-- Superuser Options -->
+                {% if user.is_superuser %}
+                  <div class="mt-3">
+                    <a href="{% url 'module:personnage_update' personnage.pk %}" class="btn btn-sm btn-warning">Modifier</a>
+                    <a href="{% url 'module:personnage_delete' personnage.pk %}" class="btn btn-sm btn-danger">Supprimer</a>
+                  </div>
+                {% endif %}
+                   <!-- Comment Section -->
+                   <div class="mt-4">
+                    <h6>Commentaires</h6>
+                    <ul class="list-group mb-3">
+                      {% for comment in personnage.comments.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                          <div>
+                            <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                          </div>
+                        
+                        </li>
+                      {% endfor %}
+                    </ul>
+  
+             
+                  </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    
+
+    {% if user.is_superuser %}
+      <div class="text-center mt-4">
+        <a href="{% url 'module:personnage_create' %}" class="btn btn-success">Créer un nouveau personnage</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="container my-4">
+    <h2 class="text-center mb-4">Chat with me to generate a description of your character in a movie</h2>
+  
+    <!-- Chat Card -->
+    <div class="card mb-4 p-3 shadow-sm">
+      <h5 class="card-title">Chat History</h5>
+      <div class="chat-history overflow-auto" id="chat-history" style="max-height: 300px;">
+        {% for chat in chats %}
+          <div class="chat-entry mb-2">
+            <p><strong>You:</strong> {{ chat.text_input }}</p>
+            <p><strong>Gemini:</strong> {{ chat.gemini_output }}</p>
+          </div>
+          <hr class="my-1">
+        {% endfor %}
+      </div>
+    </div>
+  
+    <!-- Chat Form -->
+    <div class="card mb-4 p-3 shadow-sm">
+      <form id="chat-form" method="POST" action="{% url 'module:ask_question' %}">
+        {% csrf_token %}
+        <div class="input-group">
+          <input type="text" name="text" id="chat-input" class="form-control" placeholder="Ask Gemini..." required>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+
+  <style>
+        .chat-container {
+        width: 60%;
+        margin: auto;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .chat-history {
+        max-height: 400px;
+        overflow-y: scroll;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #fff;
+    }
+    .chat-entry {
+        margin-bottom: 10px;
+    }
+    .chat-entry p {
+        margin: 0;
+    }
+    .input-group {
+        display: flex;
+    }
+    #chat-input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+    }
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+    .liked-heart {
+      color: red;
+    }
+
+    .unliked-heart {
+      color: transparent;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+      document.querySelectorAll('[id^="like-btn-"]').forEach(button => {
+      button.addEventListener('click', function() {
+        event.preventDefault(); 
+        const personnageId = this.getAttribute('data-id');
+        const heartIcon = document.getElementById(`heart-icon-${personnageId}`);
+        const totalLikes = document.getElementById(`total-likes-${personnageId}`);
+
+        fetch(`{% url "module:like_personnage" 0 %}`.replace('0', personnageId), {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.liked) {
+            heartIcon.classList.remove('unliked-heart');
+            heartIcon.classList.add('liked-heart');
+          } else {
+            heartIcon.classList.remove('liked-heart');
+            heartIcon.classList.add('unliked-heart');
+          }
+          totalLikes.innerText = data.total_likes;
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    });
+
+    // JavaScript to handle AJAX request
+    document.getElementById('generate-btn').addEventListener('click', function () {
+  const generateBtn = this;
+  const prompt = document.getElementById('prompt-input').value;
+  const generatedImage = document.getElementById('generated-image');
+  const downloadBtn = document.getElementById('download-btn');
+
+  // Disable the button and change its text to indicate processing
+  generateBtn.disabled = true;
+  generateBtn.textContent = 'Generating...';
+
+  // Clear previous image if any
+  generatedImage.src = '';
+  downloadBtn.href = '#';
+
+  fetch('{% url "module:generate_image_ajax" %}', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({ 'prompt': prompt })
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Display the generated image
+      generatedImage.src = `data:image/png;base64,${data.image}`;
+
+      // Set download link dynamically
+      downloadBtn.href = generatedImage.src;
+      downloadBtn.classList.remove('disabled');  // Enable download if it was disabled
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to generate the image. Please try again.');
+    })
+    .finally(() => {
+      // Re-enable the button and restore its original text
+      generateBtn.disabled = false;
+      generateBtn.textContent = 'Generate';
+    });
+});
+
+
+$(document).ready(function () {
+    // Get the CSRF token from the cookie
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    $('#chat-form').on('submit', function (event) {
+    event.preventDefault(); // Prevent page reload
+
+    const chatInput = $("#chat-input");
+    const userText = chatInput.val().trim(); // Trim whitespace
+
+    if (userText === "") {
+        alert("Please enter a message."); // Prevent empty submissions
+        return;
+    }
+
+    const sendButton = $(this).find('button[type="submit"]');
+
+    // Disable input and button during processing
+    chatInput.prop('disabled', true);
+    sendButton.prop('disabled', true).text('Generating...');
+
+    $.ajax({
+        url: "{% url 'module:ask_question' %}",
+        method: "POST",
+        data: { text: userText, csrfmiddlewaretoken: "{{ csrf_token }}" },
+        success: function (response) {
+            // Append the new chat to the chat history
+            let chatHistory = $('#chat-history');
+            chatHistory.append(
+                `<div class="chat-entry">
+                    <p><strong>You:</strong> ${userText}</p>
+                    <p><strong>Gemini:</strong> ${response.data.text}</p>
+                </div>`
+            );
+
+            // Clear the input field and scroll to the bottom
+            chatInput.val('');
+            chatHistory.scrollTop(chatHistory[0].scrollHeight);
+        },
+        error: function () {
+            alert('There was an error sending your message.');
+        },
+        complete: function () {
+            // Re-enable input and button after processing
+            chatInput.prop('disabled', false);
+            sendButton.prop('disabled', false).text('Send');
+        }
+    });
+});
+
+});
+
+  </script>
+{% endblock %}
+

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{% if effet %}Modifier{% else %}Ajouter{% endif %} un Effet Sonore Visuel</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if effet %}Modifier{% else %}Ajouter{% endif %}</button>
+</form>
+
+<a href="{% url 'module:effetsonorevisuelles_list' %}">Retour à la liste</a>
+{% endblock %}

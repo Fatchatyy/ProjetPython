@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %} un Film</h1>
+<form method="POST" class="mt-4">
+    {% csrf_token %}
+    <div class="form-group">
+        {{ form.titre.label_tag }}
+        {{ form.titre }}
+    </div>
+    <div class="form-group">
+        {{ form.realisateur.label_tag }}
+        {{ form.realisateur }}
+    </div>
+    <div class="form-group">
+        {{ form.annee_sortie.label_tag }}
+        {{ form.annee_sortie }}
+    </div>
+    <div class="form-group">
+        {{ form.genre.label_tag }}
+        {{ form.genre }}
+    </div>
+    <button type="submit" class="btn btn-success">Enregistrer</button>
+    <a href="{% url 'module:film_list' %}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

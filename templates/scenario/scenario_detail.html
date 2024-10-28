@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ scenario.titre }}</h1>
+<p>{{ scenario.description }}</p>
+{% if user.is_superuser %}
+<a href="{% url 'module:scenario_update' scenario.pk %}">Modifier</a>
+<a href="{% url 'module:scenario_delete' scenario.pk %}">Supprimer</a>
+{% endif %}
+{% endblock %}

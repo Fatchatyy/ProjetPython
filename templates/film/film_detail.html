@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ film.titre }}</h1>
+<p><strong>Réalisateur :</strong> {{ film.realisateur }}</p>
+<p><strong>Année de Sortie :</strong> {{ film.annee_sortie }}</p>
+<p><strong>Genre :</strong> {{ film.genre }}</p>
+{% if user.is_superuser %}
+<a href="{% url 'module:film_update' film.pk %}" class="btn btn-warning">Modifier</a>
+<a href="{% url 'module:film_delete' film.pk %}" class="btn btn-danger">Supprimer</a>
+{% endif %}
+<a href="{% url 'module:film_list' %}" class="btn btn-secondary">Retour à la Liste</a>
+{% endblock %}
